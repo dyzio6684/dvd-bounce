@@ -1,6 +1,6 @@
 use std::{thread, time::Duration};
 
-use sdl2::{pixels::Color, EventPump, event::Event, render::Canvas, video::Window};
+use sdl2::{pixels::Color, EventPump, event::Event, render::{Canvas, Texture}, video::Window, image::LoadTexture};
 
 fn run_event_loop(event_pump: &mut EventPump) -> bool {
     for event in event_pump.poll_iter() {
@@ -13,8 +13,9 @@ fn run_event_loop(event_pump: &mut EventPump) -> bool {
     true
 }
 
-fn render(canvas: &mut Canvas<Window>) {
+fn render(canvas: &mut Canvas<Window>, texture: &mut Texture) {
     canvas.clear();
+    canvas.copy(texture, None, None).unwrap();
     canvas.present();
 }
 
@@ -34,9 +35,11 @@ fn main() {
     canvas.present();
 
     let mut event_pump = sdl.event_pump().unwrap();
+    let texture_creator = canvas.texture_creator();
+    let mut logo = texture_creator.load_texture("dvd_logo.png").unwrap();
 
     loop {
-        render(&mut canvas);
+        render(&mut canvas, &mut logo);
 
         if !run_event_loop(&mut event_pump) {
             break;
