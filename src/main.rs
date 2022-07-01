@@ -1,5 +1,6 @@
 use std::{thread, time::Duration};
 
+use rand::Rng;
 use sdl2::{pixels::Color, EventPump, event::Event, render::{Canvas, Texture}, video::Window, image::LoadTexture, rect::Rect};
 
 const WIN_WIDTH: u32 = 640;
@@ -28,14 +29,18 @@ fn run_event_loop(event_pump: &mut EventPump) -> bool {
 fn render(canvas: &mut Canvas<Window>, texture: &mut Texture, data: &mut Data) {
     canvas.clear();
 
+    let mut rand = rand::thread_rng();
+
     data.x = if data.rx { data.x - 1 } else { data.x + 1 };
     data.y = if data.ry { data.y - 1 } else { data.y + 1 };
 
     if data.x + IMG_WIDTH >= WIN_WIDTH || data.x <= 0 {
         data.rx = !data.rx;
+        texture.set_color_mod(rand.gen_range(0..=255), rand.gen_range(0..=255), rand.gen_range(0..=255));
     }
     if data.y + IMG_HEIGHT >= WIN_HEIGHT || data.y <= 0 {
         data.ry = !data.ry;
+        texture.set_color_mod(rand.gen_range(0..=255), rand.gen_range(0..=255), rand.gen_range(0..=255));
     }
 
     canvas.copy(texture, None, Some(Rect::new(data.x as i32, data.y as i32, IMG_WIDTH, IMG_HEIGHT))).unwrap();
